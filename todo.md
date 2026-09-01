@@ -1,0 +1,21 @@
+# Project TODO
+
+- [x] Establish a secure operator workspace shell with persistent sidebar navigation and responsive layout.
+- [x] Add overview dashboard with current work, quick actions, readiness indicators, and recent activity.
+- [x] Add customizable tool areas for reconnaissance, defensive monitoring, lab infrastructure, documentation, and evidence.
+- [x] Add task and engagement tracking with status, priority, owner, due date, and safe-scope metadata.
+- [x] Add notes, findings, and evidence workspace with clear provenance and export-ready structure.
+- [x] Add built-in guide and contextual question panel for authorized security work, including tool purpose, prerequisites, and next steps.
+- [x] Add safe-scope guardrails and rules-of-engagement reference surfaces.
+- [x] Add database schema and typed server procedures for workspace data.
+- [x] Add Vitest coverage for core workspace procedures and validation rules.
+- [x] Verify responsive UI, success states, empty states, and error handling in the browser.
+- [x] Document how to customize tools, guides, and workflows after delivery.
+- [x] Add task owner support end-to-end (schema, procedures, seeded data, and UI display/input).
+- [x] Add provenance and export structure for notes and evidence, including source/context fields and an export-ready action.
+- [x] Expand Vitest coverage to core workspace success paths without creating persistent test data.
+- [x] Sign in and verify authenticated browser flows for task creation, status changes, note capture, guide Q&A, and error states.
+- [x] Write a delivery document explaining how to customize tool areas, guide prompts, seeded workflows, and workspace data models.
+- [x] Add isolated success-path tests for setTaskStatus, updateToolArea, and guide response fallback behavior.
+- [x] Prevent protected workspace queries from firing before authentication is established and document the unauthorized state.
+- [x] Add a Vitest test that forces guide model failure and asserts the safe fallback message is returned.
