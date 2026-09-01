@@ -25,6 +25,6 @@
 - [x] Add scenario creation and status progression for event rehearsal and live exercise planning.
 - [x] Add Vitest coverage for exercise fallback, scenario creation, and status transitions.
 - [x] Review the existing GitHub account and keep the current repository untouched.
-- [ ] Create a separate private GitHub repository and push the upgraded workspace.
+- [x] Create a separate private GitHub repository and push the upgraded workspace.
 - [x] Add explicit exercise readiness checks and safe-scope controls for authorization, stop conditions, and White Cell approval.
 - [x] Add a Vitest assertion that workspace.snapshot returns a valid exercise structure when the database is unavailable.
