@@ -19,3 +19,12 @@
 - [x] Add isolated success-path tests for setTaskStatus, updateToolArea, and guide response fallback behavior.
 - [x] Prevent protected workspace queries from firing before authentication is established and document the unauthorized state.
 - [x] Add a Vitest test that forces guide model failure and asserts the safe fallback message is returned.
+- [x] Add exercise planning data model for events, Red/Blue teams, scenarios, objectives, dates, and authorization state.
+- [x] Add protected exercise procedures with first-run seeded event, team, and scenario records.
+- [x] Add event command center UI with team lanes, phase timeline, readiness checks, and safe-scope controls.
+- [x] Add scenario creation and status progression for event rehearsal and live exercise planning.
+- [x] Add Vitest coverage for exercise fallback, scenario creation, and status transitions.
+- [x] Review the existing GitHub account and keep the current repository untouched.
+- [ ] Create a separate private GitHub repository and push the upgraded workspace.
+- [x] Add explicit exercise readiness checks and safe-scope controls for authorization, stop conditions, and White Cell approval.
+- [x] Add a Vitest assertion that workspace.snapshot returns a valid exercise structure when the database is unavailable.

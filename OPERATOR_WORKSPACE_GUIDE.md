@@ -39,3 +39,11 @@ When extending the schema, update `drizzle/schema.ts`, generate a migration with
 ## Safe expansion roadmap
 
 The next high-value build slice is a true tool-area editor with per-area checklists and links, followed by engagement templates, file attachments backed by S3, and a richer report exporter. Integrations with external security platforms should be added only after their authentication, authorization, and data-retention requirements are explicitly defined.
+
+## Red/Blue event planning
+
+The **Exercise command center** is the planning surface for a full event. The seeded example, Operation Northstar, demonstrates the intended vocabulary: a codename, dates, an objective, an authorization state, Red/Blue/White Cell lanes, and scenario cards that move through draft, ready, live, and complete. The White Cell is the visible owner of safety calls, authorization, adjudication, and timekeeping.
+
+Start by editing the scenario titles and phases to match the event design. Keep Red and Blue objectives separate, write success criteria that can be observed, and include a safety note for every scenario. Use the scenario status control to represent readiness rather than to imply that a live action is automatically authorized. Authorization remains an explicit event field and should be approved before execution.
+
+The event model is in `drizzle/schema.ts` across `exercises`, `exerciseTeams`, and `exerciseScenarios`. Server access is provided by the `workspace.snapshot`, `workspace.createScenario`, and `workspace.setScenarioStatus` procedures in `server/routers.ts`. The initial example is seeded in `ensureDefaultExercise` in `server/db.ts`; changing those seed values affects new operator workspaces and does not overwrite existing exercise records.

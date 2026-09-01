@@ -70,3 +70,52 @@ export const workspaceNotes = mysqlTable("workspaceNotes", {
 
 export type WorkspaceNote = typeof workspaceNotes.$inferSelect;
 export type InsertWorkspaceNote = typeof workspaceNotes.$inferInsert;
+
+export const exercises = mysqlTable("exercises", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id),
+  name: varchar("name", { length: 200 }).notNull(),
+  codename: varchar("codename", { length: 80 }).notNull(),
+  status: mysqlEnum("status", ["planning", "rehearsal", "live", "review", "complete"]).default("planning").notNull(),
+  startDate: varchar("startDate", { length: 32 }),
+  endDate: varchar("endDate", { length: 32 }),
+  objective: text("objective"),
+  authorizationStatus: mysqlEnum("authorizationStatus", ["draft", "approved", "expired"]).default("draft").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Exercise = typeof exercises.$inferSelect;
+export type InsertExercise = typeof exercises.$inferInsert;
+
+export const exerciseTeams = mysqlTable("exerciseTeams", {
+  id: int("id").autoincrement().primaryKey(),
+  exerciseId: int("exerciseId").notNull().references(() => exercises.id),
+  team: mysqlEnum("team", ["red", "blue", "white"]).notNull(),
+  name: varchar("name", { length: 120 }).notNull(),
+  lead: varchar("lead", { length: 160 }),
+  objective: text("objective"),
+  roster: text("roster"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ExerciseTeam = typeof exerciseTeams.$inferSelect;
+export type InsertExerciseTeam = typeof exerciseTeams.$inferInsert;
+
+export const exerciseScenarios = mysqlTable("exerciseScenarios", {
+  id: int("id").autoincrement().primaryKey(),
+  exerciseId: int("exerciseId").notNull().references(() => exercises.id),
+  title: varchar("title", { length: 200 }).notNull(),
+  phase: mysqlEnum("phase", ["plan", "rehearse", "execute", "review"]).default("plan").notNull(),
+  status: mysqlEnum("status", ["draft", "ready", "live", "complete"]).default("draft").notNull(),
+  redObjective: text("redObjective"),
+  blueObjective: text("blueObjective"),
+  successCriteria: text("successCriteria"),
+  safetyNotes: text("safetyNotes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ExerciseScenario = typeof exerciseScenarios.$inferSelect;
+export type InsertExerciseScenario = typeof exerciseScenarios.$inferInsert;

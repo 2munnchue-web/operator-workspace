@@ -40,6 +40,9 @@ describe("workspace procedures", () => {
     expect(snapshot.areas.length).toBeGreaterThan(0);
     expect(snapshot.tasks[0]).toMatchObject({ status: expect.any(String), scopeStatus: expect.any(String) });
     expect(snapshot.notes[0]).toMatchObject({ source: expect.any(String), context: expect.any(String) });
+    expect(snapshot.exercise).toMatchObject({ name: expect.any(String), codename: expect.any(String), authorizationStatus: expect.any(String) });
+    expect(snapshot.exercise.teams.length).toBeGreaterThanOrEqual(3);
+    expect(snapshot.exercise.scenarios.length).toBeGreaterThanOrEqual(1);
   });
 
   it("creates a task-shaped result without persisting when the database is unavailable", async () => {
@@ -95,6 +98,26 @@ describe("workspace procedures", () => {
     const response = await caller.guide.ask({ messages: [{ role: "user", content: "What should I do next?" }] });
     expect(response.content).toContain("temporarily unavailable");
     expect(response.content).toContain("authorization");
+  });
+
+  it("creates a scenario-shaped result without persistence", async () => {
+    const previousDatabaseUrl = process.env.DATABASE_URL;
+    process.env.DATABASE_URL = "";
+    const caller = appRouter.createCaller(createContext());
+    const scenario = await caller.workspace.createScenario({ exerciseId: 1, title: "Synthetic alert validation", phase: "rehearse" });
+    if (previousDatabaseUrl === undefined) delete process.env.DATABASE_URL;
+    else process.env.DATABASE_URL = previousDatabaseUrl;
+    expect(scenario).toMatchObject({ exerciseId: 1, title: "Synthetic alert validation", phase: "rehearse", status: "draft" });
+  });
+
+  it("advances a scenario-shaped result without persistence", async () => {
+    const previousDatabaseUrl = process.env.DATABASE_URL;
+    process.env.DATABASE_URL = "";
+    const caller = appRouter.createCaller(createContext());
+    const scenario = await caller.workspace.setScenarioStatus({ scenarioId: 7, exerciseId: 1, status: "ready" });
+    if (previousDatabaseUrl === undefined) delete process.env.DATABASE_URL;
+    else process.env.DATABASE_URL = previousDatabaseUrl;
+    expect(scenario).toMatchObject({ id: 7, exerciseId: 1, status: "ready" });
   });
 
   it("requires an actionable task title", async () => {

@@ -10,16 +10,19 @@ import { trpc } from "@/lib/trpc";
 import {
   ArrowUpRight,
   BookOpen,
+  CalendarDays,
   Check,
   ChevronRight,
   CircleAlert,
   Clock3,
   FileText,
   Filter,
+  Flag,
   Flame,
   FolderKanban,
   LockKeyhole,
   Plus,
+  Play,
   Radar,
   ScanLine,
   Search,
@@ -29,6 +32,7 @@ import {
   Sparkles,
   Target,
   TerminalSquare,
+  UsersRound,
   Zap,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
@@ -56,6 +60,12 @@ const accentStyles: Record<string, { icon: string; glow: string; border: string;
 
 const statusLabel: Record<string, string> = { backlog: "Backlog", active: "In motion", review: "Review", complete: "Complete" };
 const nextStatus: Record<string, "backlog" | "active" | "review" | "complete"> = { backlog: "active", active: "review", review: "complete", complete: "backlog" };
+const nextScenarioStatus = (status: "draft" | "ready" | "live" | "complete"): "draft" | "ready" | "live" | "complete" => {
+  if (status === "draft") return "ready";
+  if (status === "ready") return "live";
+  if (status === "live") return "complete";
+  return "complete";
+};
 
 function formatTime(dateValue: Date | string | null | undefined) {
   if (!dateValue) return "—";
@@ -77,6 +87,10 @@ export default function Home() {
   const [noteTitle, setNoteTitle] = useState("");
   const [noteContent, setNoteContent] = useState("");
   const [noteKind, setNoteKind] = useState<"note" | "finding" | "evidence" | "decision">("note");
+  const [scenarioTitle, setScenarioTitle] = useState("");
+  const [scenarioPhase, setScenarioPhase] = useState<"plan" | "rehearse" | "execute" | "review">("plan");
+  const [showScenarioComposer, setShowScenarioComposer] = useState(false);
+  const [exerciseChecks, setExerciseChecks] = useState<Record<string, boolean>>({ authorization: true, stopConditions: true, evidencePlan: true, whiteCell: false });
   const [taskTitle, setTaskTitle] = useState("");
   const [taskOwner, setTaskOwner] = useState("You");
   const [taskDescription, setTaskDescription] = useState("");
@@ -102,6 +116,20 @@ export default function Home() {
   const updateTask = trpc.workspace.setTaskStatus.useMutation({
     onSuccess: () => void utils.workspace.snapshot.invalidate(),
     onError: error => toast.error(error.message || "Could not update the task"),
+  });
+
+  const createScenario = trpc.workspace.createScenario.useMutation({
+    onSuccess: () => {
+      toast.success("Scenario added to the exercise plan");
+      setScenarioTitle("");
+      setShowScenarioComposer(false);
+      void utils.workspace.snapshot.invalidate();
+    },
+    onError: error => toast.error(error.message || "Could not add the scenario"),
+  });
+  const setScenarioStatus = trpc.workspace.setScenarioStatus.useMutation({
+    onSuccess: () => void utils.workspace.snapshot.invalidate(),
+    onError: error => toast.error(error.message || "Could not update scenario status"),
   });
 
   const updateArea = trpc.workspace.updateToolArea.useMutation({
@@ -130,6 +158,9 @@ export default function Home() {
   });
 
   const areas = data?.areas ?? [];
+  const exercise = data?.exercise;
+  const scenarios = exercise?.scenarios ?? [];
+  const teams = exercise?.teams ?? [];
   const tasks = data?.tasks ?? [];
   const notes = data?.notes ?? [];
   const areaNames = useMemo(() => Object.fromEntries(areas.map(area => [area.slug, area.name])), [areas]);
@@ -164,6 +195,17 @@ export default function Home() {
       return;
     }
     updateArea.mutate({ slug: selectedAreaSlug, name: areaName.trim(), description: areaDescription.trim(), status: areaStatus });
+  };
+
+  const toggleExerciseCheck = (key: string) => setExerciseChecks(previous => ({ ...previous, [key]: !previous[key] }));
+  const exerciseReady = Object.values(exerciseChecks).every(Boolean);
+
+  const submitScenario = () => {
+    if (!exercise || scenarioTitle.trim().length < 3) {
+      toast.error("Give the scenario a clear title");
+      return;
+    }
+    createScenario.mutate({ exerciseId: exercise.id, title: scenarioTitle.trim(), phase: scenarioPhase });
   };
 
   const submitNote = () => {
@@ -210,6 +252,8 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        <section id="exercise" className="scroll-mt-24"><Card className="border-cyan-300/20 bg-[#121a24] shadow-xl shadow-cyan-950/10"><CardHeader className="border-b border-slate-800/80 px-5 py-5 md:px-6"><div className="flex flex-wrap items-center justify-between gap-3"><div><div className="flex items-center gap-2"><Flag className="h-4 w-4 text-cyan-200" /><CardTitle className="text-base text-slate-100">Exercise command center</CardTitle><Badge className="border border-emerald-300/20 bg-emerald-300/10 text-[10px] text-emerald-200 hover:bg-emerald-300/10">{exercise?.authorizationStatus ?? "draft"} authorization</Badge></div><p className="mt-1 text-xs text-slate-500">Plan the event as a shared operating picture, not a collection of disconnected checklists.</p></div><Button size="sm" onClick={() => setShowScenarioComposer(value => !value)} className="bg-cyan-300 text-slate-950 hover:bg-cyan-200"><Plus className="mr-1.5 h-3.5 w-3.5" />{showScenarioComposer ? "Close" : "Add scenario"}</Button></div></CardHeader><CardContent className="space-y-5 p-5 md:p-6"><div className="grid gap-5 xl:grid-cols-[0.9fr_1.1fr]"><div className="rounded-2xl border border-slate-800 bg-slate-950/20 p-5"><div className="flex items-start justify-between gap-4"><div><p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-cyan-200">{exercise?.codename ?? "EVENT"}</p><h3 className="mt-2 text-xl font-semibold text-slate-100">{exercise?.name ?? "No exercise selected"}</h3></div><CalendarDays className="h-5 w-5 text-slate-500" /></div><p className="mt-3 text-sm leading-6 text-slate-400">{exercise?.objective}</p><div className="mt-5 flex flex-wrap gap-2 text-[10px] uppercase tracking-[0.13em] text-slate-500"><span className="rounded-full border border-slate-700 px-3 py-1">{exercise?.startDate} → {exercise?.endDate}</span><span className="rounded-full border border-slate-700 px-3 py-1">{exercise?.status}</span><span className="rounded-full border border-emerald-300/20 bg-emerald-300/5 px-3 py-1 text-emerald-200">White cell owns safety</span></div><div className="mt-5 border-t border-slate-800/80 pt-4"><div className="flex items-center justify-between"><p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">Readiness gate</p><span className={cn("text-[10px] uppercase tracking-[0.12em]", exerciseReady ? "text-emerald-200" : "text-amber-200")}>{exerciseReady ? "Ready to advance" : "Approval required"}</span></div><div className="mt-3 grid gap-2">{[["authorization", "Authorization is current"], ["stopConditions", "Stop conditions are written"], ["evidencePlan", "Evidence plan is ready"], ["whiteCell", "White Cell approval recorded"]].map(([key, label]) => <button key={key} type="button" onClick={() => toggleExerciseCheck(key)} className="flex items-center gap-2 text-left text-xs text-slate-400 hover:text-slate-200"><span className={cn("flex h-4 w-4 items-center justify-center rounded border", exerciseChecks[key] ? "border-emerald-300/40 bg-emerald-300/10 text-emerald-200" : "border-slate-700 text-transparent")}><Check className="h-3 w-3" /></span>{label}</button>)}</div></div></div><div><div className="mb-3 flex items-center justify-between"><p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">Team lanes</p><span className="text-[10px] text-slate-600">{teams.length} operating groups</span></div><div className="grid gap-3 md:grid-cols-3">{teams.map(team => <div key={team.id} className={cn("rounded-2xl border p-4", team.team === "red" ? "border-rose-300/20 bg-rose-300/[0.04]" : team.team === "blue" ? "border-cyan-300/20 bg-cyan-300/[0.04]" : "border-amber-300/20 bg-amber-300/[0.04]")}><div className="flex items-center justify-between gap-2"><span className="text-sm font-medium text-slate-200">{team.name}</span><UsersRound className="h-4 w-4 text-slate-500" /></div><p className="mt-2 text-[11px] text-slate-500">Lead · {team.lead}</p><p className="mt-3 text-xs leading-5 text-slate-400">{team.objective}</p><p className="mt-3 text-[10px] uppercase tracking-[0.12em] text-slate-600">{team.roster}</p></div>)}</div></div></div><div className="border-t border-slate-800/80 pt-5"><div className="mb-3 flex items-center justify-between"><div><p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">Scenario timeline</p><p className="mt-1 text-xs text-slate-600">Progress from plan → rehearse → execute → review.</p></div><span className="text-[10px] uppercase tracking-[0.12em] text-slate-600">{scenarios.filter(scenario => scenario.status === "complete").length}/{scenarios.length} complete</span></div>{showScenarioComposer && <div className="mb-4 flex flex-col gap-3 rounded-2xl border border-cyan-300/15 bg-cyan-300/[0.04] p-4 md:flex-row"><Input value={scenarioTitle} onChange={event => setScenarioTitle(event.target.value)} placeholder="Scenario title" className="border-slate-700 bg-slate-950/40 text-slate-100 placeholder:text-slate-600" /><select value={scenarioPhase} onChange={event => setScenarioPhase(event.target.value as typeof scenarioPhase)} className="h-9 rounded-md border border-slate-700 bg-slate-950/40 px-3 text-sm text-slate-200 outline-none"><option value="plan">Plan</option><option value="rehearse">Rehearse</option><option value="execute">Execute</option><option value="review">Review</option></select><Button onClick={submitScenario} disabled={createScenario.isPending} className="bg-cyan-300 text-slate-950 hover:bg-cyan-200">{createScenario.isPending ? "Adding…" : "Add"}</Button></div>}<div className="grid gap-3">{scenarios.map(scenario => <div key={scenario.id} className="flex flex-col gap-3 rounded-2xl border border-slate-800 bg-slate-950/20 p-4 md:flex-row md:items-center md:justify-between"><div className="flex min-w-0 items-start gap-3"><span className="mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-slate-700 bg-slate-900 text-cyan-200"><Play className="h-3.5 w-3.5" /></span><div className="min-w-0"><div className="flex flex-wrap items-center gap-2"><p className="text-sm font-medium text-slate-200">{scenario.title}</p><Badge variant="outline" className="border-slate-700 text-[10px] text-slate-500">{scenario.phase}</Badge></div><p className="mt-1 text-xs text-slate-500">{scenario.successCriteria}</p><p className="mt-2 text-[10px] uppercase tracking-[0.12em] text-amber-200/70">Safety: {scenario.safetyNotes}</p></div></div><Button variant="outline" size="sm" disabled={scenario.status === "complete" || setScenarioStatus.isPending || (nextScenarioStatus(scenario.status) === "live" && !exerciseReady)} onClick={() => setScenarioStatus.mutate({ scenarioId: scenario.id, exerciseId: exercise!.id, status: nextScenarioStatus(scenario.status) })} className="shrink-0 border-slate-700 bg-transparent text-slate-300 hover:bg-slate-800">{scenario.status === "complete" ? "Complete" : nextScenarioStatus(scenario.status) === "live" && !exerciseReady ? "Needs White Cell approval" : `${scenario.status} → ${nextScenarioStatus(scenario.status)}`}</Button></div>)}</div></div></CardContent></Card></section>
 
         <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4" aria-label="Workspace summary">
           <MetricCard label="In motion" value={isLoading ? "—" : String(activeCount)} detail="tasks being worked" icon={Zap} tone="cyan" />
