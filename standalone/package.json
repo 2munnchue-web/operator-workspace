@@ -1,0 +1,13 @@
+{
+  "name": "operator-workspace-standalone",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs",
+    "dev": "node --watch server.mjs",
+    "check": "node --check server.mjs && node --check public/app.js",
+    "test": "node test.mjs"
+  },
+  "description": "A self-contained, localization-ready operator workspace for authorized security and Red/Blue team planning."
+}

@@ -28,3 +28,20 @@
 - [x] Create a separate private GitHub repository and push the upgraded workspace.
 - [x] Add explicit exercise readiness checks and safe-scope controls for authorization, stop conditions, and White Cell approval.
 - [x] Add a Vitest assertion that workspace.snapshot returns a valid exercise structure when the database is unavailable.
+- [x] Map and document current Manus-specific coupling points and standalone replacement boundaries.
+- [x] Add locale packs and a language switcher with a stable translation contract.
+- [x] Add standalone runtime configuration with local/mock adapters and documented production adapter seams.
+- [x] Add ready-to-use tool registry with per-tool enable/disable toggles and safe launch metadata.
+- [x] Add a creative tool builder for user-defined tool cards, fields, prompts, and runbooks.
+- [x] Add persistent guide preferences/context and a deployable learning area with course/module progress.
+- [x] Add tests for localization, adapter fallback, tool toggles, and learning progress.
+- [x] Update the separate GitHub repository with the decoupled build and documentation.
+- [x] Apply locale strings to all remaining standalone UI labels and actions across every supported view.
+- [x] Refactor standalone persistence and guide logic behind explicit local/mock/production adapter modes.
+- [x] Add structured safe-launch metadata to tool records and display prerequisites, scope, dry-run, and launch contract.
+- [x] Extend Creative Lab with persisted prompt templates for custom tools.
+- [x] Persist guide preferences, default scope, and conversation context in standalone data and UI.
+- [x] Add failure simulation tests for adapter fallback behavior.
+- [x] Re-verify the major standalone views in English, Spanish, and French after the localization pass.
+- [x] Separate production adapter behavior from local JSON and document the explicit production contract without pretending it is local mode.
+- [x] Persist guide conversation history on the server and restore it into the Guide view, with save/restore tests.

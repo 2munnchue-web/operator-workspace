@@ -1,0 +1,181 @@
+{
+  "settings": {
+    "locale": "en",
+    "guideMode": "local",
+    "showAdvanced": true,
+    "safeMode": true,
+    "workspaceName": "Operator Workspace",
+    "defaultScope": "Authorized isolated lab or explicitly approved exercise assets",
+    "guidePersona": "Practical, skeptical, scope-aware coach",
+    "guideMemory": "Keep answers connected to the current exercise, tool design, and learning goals.",
+    "guideHistory": []
+  },
+  "tools": [
+    {
+      "id": "asset-inventory",
+      "name": "Asset inventory",
+      "category": "Discovery",
+      "description": "Track approved assets, owners, sources, and scope state.",
+      "enabled": true,
+      "kind": "checklist",
+      "accent": "cyan",
+      "prerequisites": "Approved asset list",
+      "allowedScope": "Isolated or explicitly authorized assets",
+      "dryRun": true,
+      "launchContract": "Read-only inventory with evidence note"
+    },
+    {
+      "id": "telemetry-review",
+      "name": "Telemetry review",
+      "category": "Defense",
+      "description": "Map signals to scenarios and document detection coverage.",
+      "enabled": true,
+      "kind": "workflow",
+      "accent": "amber",
+      "prerequisites": "Telemetry source and scenario owner",
+      "allowedScope": "Authorized monitoring data",
+      "dryRun": true,
+      "launchContract": "Map signal → owner → response"
+    },
+    {
+      "id": "lab-builder",
+      "name": "Lab builder",
+      "category": "Infrastructure",
+      "description": "Record isolated lab components, prerequisites, and reset steps.",
+      "enabled": true,
+      "kind": "workspace",
+      "accent": "violet",
+      "prerequisites": "Isolated lab plan",
+      "allowedScope": "Local lab infrastructure",
+      "dryRun": true,
+      "launchContract": "Record build, reset, and validation steps"
+    },
+    {
+      "id": "evidence-capture",
+      "name": "Evidence capture",
+      "category": "Reporting",
+      "description": "Capture provenance, context, observations, and next actions.",
+      "enabled": true,
+      "kind": "record",
+      "accent": "rose",
+      "prerequisites": "Source and timestamp",
+      "allowedScope": "Exercise or lab evidence",
+      "dryRun": true,
+      "launchContract": "Capture provenance and context"
+    },
+    {
+      "id": "event-planner",
+      "name": "Exercise planner",
+      "category": "Red / Blue",
+      "description": "Plan team lanes, scenarios, readiness, and White Cell controls.",
+      "enabled": true,
+      "kind": "event",
+      "accent": "green",
+      "prerequisites": "White Cell authorization",
+      "allowedScope": "Approved exercise scope",
+      "dryRun": true,
+      "launchContract": "Advance only through readiness gate"
+    }
+  ],
+  "customTools": [],
+  "learning": [
+    {
+      "id": "scope-first",
+      "title": "Scope before signal",
+      "level": "Foundation",
+      "minutes": 18,
+      "description": "Build a rules-of-engagement habit before any technical activity.",
+      "progress": 100
+    },
+    {
+      "id": "blue-telemetry",
+      "title": "Telemetry coverage map",
+      "level": "Blue team",
+      "minutes": 25,
+      "description": "Connect scenarios to alerts, owners, response steps, and evidence.",
+      "progress": 60
+    },
+    {
+      "id": "purple-rehearsal",
+      "title": "Purple-team rehearsal design",
+      "level": "Advanced",
+      "minutes": 32,
+      "description": "Turn a scenario into observable objectives for Red, Blue, and White Cell.",
+      "progress": 20
+    },
+    {
+      "id": "after-action",
+      "title": "After-action reporting",
+      "level": "Reporting",
+      "minutes": 22,
+      "description": "Convert exercise observations into findings, decisions, and owners.",
+      "progress": 0
+    }
+  ],
+  "event": {
+    "name": "Operation Northstar",
+    "codename": "NORTHSTAR-26",
+    "dates": "Oct 14–16, 2026",
+    "status": "Planning",
+    "authorization": "Approved for isolated lab use",
+    "objective": "Validate detection, response, and evidence workflows across a controlled purple-team scenario.",
+    "teams": [
+      {
+        "name": "Red Team",
+        "lead": "Morgan Lee",
+        "detail": "Approved attack paths and observable behaviors",
+        "accent": "red"
+      },
+      {
+        "name": "Blue Team",
+        "lead": "Jordan Patel",
+        "detail": "Detection, triage, containment, and evidence",
+        "accent": "blue"
+      },
+      {
+        "name": "White Cell",
+        "lead": "Casey Rivera",
+        "detail": "Authorization, safety calls, adjudication, timekeeping",
+        "accent": "white"
+      }
+    ],
+    "readiness": {
+      "authorization": true,
+      "stopConditions": true,
+      "evidencePlan": true,
+      "whiteCellApproval": false
+    },
+    "scenarios": [
+      {
+        "id": "scenario-1",
+        "title": "Initial access simulation",
+        "phase": "Rehearse",
+        "status": "Ready",
+        "red": "Validate the approved entry path against the isolated lab service.",
+        "blue": "Confirm alert, triage owner, and evidence capture steps.",
+        "success": "Alert acknowledged within 10 minutes; no out-of-scope systems touched.",
+        "safety": "Listed lab asset only; stop on any unexpected production signal."
+      },
+      {
+        "id": "scenario-2",
+        "title": "Credential exposure response",
+        "phase": "Execute",
+        "status": "Draft",
+        "red": "Simulate exposure using synthetic accounts.",
+        "blue": "Rotate synthetic credentials and preserve an auditable timeline.",
+        "success": "Containment decision recorded with timestamps and owner sign-off.",
+        "safety": "Synthetic credentials only; no real secrets or external accounts."
+      },
+      {
+        "id": "scenario-3",
+        "title": "Lessons-learned review",
+        "phase": "Review",
+        "status": "Draft",
+        "red": "Provide observations without repeating live actions.",
+        "blue": "Map detections, gaps, and remediation owners.",
+        "success": "Joint after-action record accepted by the White Cell.",
+        "safety": "Review evidence remains scoped to the exercise dataset."
+      }
+    ]
+  }
+}
